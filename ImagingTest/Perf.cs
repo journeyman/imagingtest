@@ -18,7 +18,7 @@ namespace ImagingTest
 
             public override string ToString()
             {
-                return string.Format("{0:mm\\:ss\\:fff}", Elapsed);
+                return Elapsed.ToMinSecsMsecs();
             }
         }
 
@@ -50,6 +50,7 @@ namespace ImagingTest
             var dur = _tests[title];
             dur.Watch.Stop();
             dur.Elapsed = dur.Watch.Elapsed;
+            _tests.Remove(title);
             return dur;
         }
     }
@@ -101,6 +102,11 @@ namespace ImagingTest
             if (kilos < k)
                 return string.Format(format, kilos, "Kb");
             return string.Format(format, kilos/k, "Mb");
+        }
+
+        public static string ToMinSecsMsecs(this TimeSpan time)
+        {
+            return string.Format("{0:mm\\:ss\\:fff}", time);
         }
     }
 }
