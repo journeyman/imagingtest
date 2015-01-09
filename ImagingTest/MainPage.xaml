@@ -14,7 +14,10 @@
     shell:SystemTray.IsVisible="True">
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <ScrollViewer Height="100" VerticalAlignment="Bottom">
+        
+        <Image x:Name="Image" Stretch="Uniform" />
+        
+        <ScrollViewer Height="200" Background="DarkGray" Opacity=".7" VerticalAlignment="Bottom">
             <ItemsControl x:Name="Log">
                 
             </ItemsControl>

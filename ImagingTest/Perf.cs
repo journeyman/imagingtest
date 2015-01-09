@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Windows.Phone.System.Memory;
+using Microsoft.Phone.Info;
 
 namespace ImagingTest
 {
@@ -49,6 +51,51 @@ namespace ImagingTest
             dur.Watch.Stop();
             dur.Elapsed = dur.Watch.Elapsed;
             return dur;
+        }
+    }
+
+    public static class Memory
+    {
+        public class MemSnapshot
+        {
+            public ulong CurrentlyUsed { get; set; }
+            public ulong BeforeOOM { get; set; }
+            public ulong Usage { get; set; }
+            public ulong PeakUsage { get; set; }
+            public ulong Limit { get; set; }
+
+            public override string ToString()
+            {
+                return string.Format("Usage: {0}, Peak: {1}", 
+                    CurrentlyUsed.ToPrettyMbString(),
+                    PeakUsage.ToPrettyMbString());
+            }
+        }
+
+        public static MemSnapshot Snapshot()
+        {
+            var shot = new MemSnapshot();
+            shot.CurrentlyUsed = MemoryManager.ProcessCommittedBytes;
+            shot.BeforeOOM = MemoryManager.ProcessCommittedLimit;
+            shot.Usage = (ulong)DeviceStatus.ApplicationCurrentMemoryUsage;
+            shot.PeakUsage = (ulong)DeviceStatus.ApplicationPeakMemoryUsage;
+            shot.Limit = (ulong)DeviceStatus.ApplicationMemoryUsageLimit;
+            return shot;
+        }
+    }
+
+    public static class Ext
+    {
+        public static string ToPrettyMbString(this ulong bytes)
+        {
+            const int k = 1024;
+            const string format = "{0:#.00} {1}";
+            if (bytes < k)
+                return string.Format(format, bytes, "B");
+            var kilos = Math.Round((double)bytes/k);
+            if (kilos < k)
+                return string.Format(format, kilos, "Kb");
+            return string.Format(format, kilos/k, "Mb");
         }
     }
 }

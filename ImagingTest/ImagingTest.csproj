@@ -141,12 +141,26 @@
     <Content Include="Assets\Tiles\IconicTileSmall.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\images\photo1_big.jpg" />
+    <Content Include="Resources\images\photo1_small.jpg" />
+    <Content Include="Resources\images\photo2_big.jpg" />
+    <Content Include="Resources\images\photo2_small.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AppResources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlurBitmapEx\BlurBitmapEx.csproj">
+      <Project>{d57a37e0-6d24-4fb5-b351-71480d7e1931}</Project>
+      <Name>BlurBitmapEx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BlurNokia\BlurNokia.csproj">
+      <Project>{8c4d93b3-fd24-49aa-a3d4-0fcf80e868e4}</Project>
+      <Name>BlurNokia</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />

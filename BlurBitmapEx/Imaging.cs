@@ -4,11 +4,17 @@ using System.Windows.Media.Imaging;
 
 namespace BlurBitmapEx
 {
-    public class Imaging
+    public static class Imaging
     {
-        public async Task<WriteableBitmap> Blur(Stream stream, int kernelSize)
+        public static async Task<WriteableBitmap> Blur(Stream stream, int kernelSize)
         {
-            
+            var image = new BitmapImage();
+            using (stream)
+            {
+                image.SetSource(stream);
+                var bitmap = new WriteableBitmap(image);
+                return bitmap.Convolute(WriteableBitmapExtensions.KernelGaussianBlur5x5);
+            }
         }
     }
 }

@@ -7,9 +7,9 @@ using Lumia.Imaging.Adjustments;
 
 namespace BlurNokia
 {
-    public class Imaging
+    public static class Imaging
     {
-        public async Task<WriteableBitmap> Blur(Stream stream, int kernelSize)
+        public static async Task<WriteableBitmap> Blur(Stream stream, int kernelSize)
         {
             using (var source = new StreamImageSource(stream))
             {
@@ -19,13 +19,21 @@ namespace BlurNokia
                     filters.Filters = new[] {blur};
 
                     //var output = new WriteableBitmap(pixelWidth, pixelHeight);
-                    using (var renderer = new WriteableBitmapRenderer(filters))
+                    using (var renderer = new BitmapRenderer(filters))
                     {
-                        return await renderer.RenderAsync();
+                        var bitmap = await renderer.RenderAsync();
+                        var target = new WriteableBitmap((int)bitmap.Dimensions.Width, (int)bitmap.Dimensions.Height);
+                        
+                        using (var rend = new WriteableBitmapRenderer(new BitmapImageSource(bitmap), target))
+                        {
+                            return await rend.RenderAsync();
+                            //return target;
+                        }
                     }
                 }
             }
 
         }
+
     }
 }
