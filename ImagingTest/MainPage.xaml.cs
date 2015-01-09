@@ -31,15 +31,35 @@ namespace ImagingTest
 
         private async void DoTheTest()
         {
-            LogMessage(string.Format("Before image loading:\n{0}", Memory.Snapshot()));
-            var uri = new Uri("ms-appx:///Resources/images/photo2_big.jpg");
-            var file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            var stream = await file.OpenStreamForReadAsync();
-            LogMessage(Perf.Checkpoint("Nokia Blur") + ": before");
-            var image = await BlurNokia.Imaging.Blur(stream, 17);
-            LogMessage(Perf.Checkpoint("Nokia Blur") + ": after");
-            LogMessage(string.Format("After image loading:\n{0}", Memory.Snapshot()));
+            var stream = await GetImage();
+            var memBefore = Memory.Snapshot();
+            Perf.Checkpoint("Nokia Blur");
+            var image = BlurBitmapEx.Imaging.Blur(stream, 17);
+            LogMessage("Time: " + Perf.Checkpoint("Nokia Blur"));
+            LogMessage(string.Format("Memory: {0}", (Memory.Snapshot() - memBefore).ToPrettyMbString()));
             Image.Source = image;
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        public async Task<Stream> GetImage()
+        {
+            TaskCompletionSource<Stream> tcs = new TaskCompletionSource<Stream>();
+            var uri = new Uri("http://lorempixel.com/200/200/people/");
+            var client = new WebClient();
+            client.OpenReadCompleted += (sender, args) =>
+                {
+                    if (args.Error == null)
+                    {
+                        tcs.SetResult(args.Result);
+                    }
+                    else
+                    {
+                        tcs.SetException(args.Error);
+                    }
+                };
+            client.OpenReadAsync(uri);
+            return await tcs.Task;
         }
 
         private void LogMessage(string msg)

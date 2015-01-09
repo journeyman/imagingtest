@@ -18,7 +18,7 @@ namespace ImagingTest
 
             public override string ToString()
             {
-                return string.Format("{0}: {1}", Title, Elapsed);
+                return string.Format("{0:mm\\:ss\\:fff}", Elapsed);
             }
         }
 
@@ -58,11 +58,16 @@ namespace ImagingTest
     {
         public class MemSnapshot
         {
-            public ulong CurrentlyUsed { get; set; }
-            public ulong BeforeOOM { get; set; }
-            public ulong Usage { get; set; }
-            public ulong PeakUsage { get; set; }
-            public ulong Limit { get; set; }
+            public long CurrentlyUsed { get; set; }
+            public long BeforeOOM { get; set; }
+            public long Usage { get; set; }
+            public long PeakUsage { get; set; }
+            public long Limit { get; set; }
+
+            public static long operator -(MemSnapshot a, MemSnapshot b)
+            {
+                return a.CurrentlyUsed - b.CurrentlyUsed;
+            }
 
             public override string ToString()
             {
@@ -75,18 +80,18 @@ namespace ImagingTest
         public static MemSnapshot Snapshot()
         {
             var shot = new MemSnapshot();
-            shot.CurrentlyUsed = MemoryManager.ProcessCommittedBytes;
-            shot.BeforeOOM = MemoryManager.ProcessCommittedLimit;
-            shot.Usage = (ulong)DeviceStatus.ApplicationCurrentMemoryUsage;
-            shot.PeakUsage = (ulong)DeviceStatus.ApplicationPeakMemoryUsage;
-            shot.Limit = (ulong)DeviceStatus.ApplicationMemoryUsageLimit;
+            shot.CurrentlyUsed = (long)MemoryManager.ProcessCommittedBytes;
+            shot.BeforeOOM = (long)MemoryManager.ProcessCommittedLimit;
+            shot.Usage = DeviceStatus.ApplicationCurrentMemoryUsage;
+            shot.PeakUsage = DeviceStatus.ApplicationPeakMemoryUsage;
+            shot.Limit = DeviceStatus.ApplicationMemoryUsageLimit;
             return shot;
         }
     }
 
     public static class Ext
     {
-        public static string ToPrettyMbString(this ulong bytes)
+        public static string ToPrettyMbString(this long bytes)
         {
             const int k = 1024;
             const string format = "{0:#.00} {1}";
