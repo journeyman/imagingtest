@@ -45,6 +45,7 @@ namespace BlurNokia
                     {
                         renderer.Size = size;
                         renderer.OutputOption = OutputOption.PreserveAspectRatio;
+                        
                         var bitmap = await renderer.RenderAsync();
                         var target = new WriteableBitmap((int)bitmap.Dimensions.Width, (int)bitmap.Dimensions.Height);
 

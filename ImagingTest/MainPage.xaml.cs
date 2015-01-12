@@ -20,9 +20,11 @@
 
             Loaded += async (sender, args) =>
                 {
+                    await this.Warmup();
+
                     var data = await DoTheTest();
                     DumpSingleTest(data);
-                    
+
                     Application.Current.Terminate();
                 };
         }
@@ -32,7 +34,7 @@
             var fileStorage = IsolatedStorageFile.GetUserStoreForApplication();
             var writer = new StreamWriter(new IsolatedStorageFileStream("dump.txt", FileMode.Append, fileStorage));
             
-            writer.WriteLine("{0},{1}", testData.TimeUsed, testData.MemoryUsed);
+            writer.WriteLine("{0},{1}", testData.TimeUsed.ToMinSecsMsecs(), testData.MemoryUsed.ToPrettyMbString());
             writer.Close();
             writer.Dispose();
         }
@@ -42,13 +44,18 @@
             var stream = await GetImage();
             var memBefore = Memory.Snapshot();
             Perf.Checkpoint("Nokia Blur");
-            var image = BlurBitmapEx.Imaging.Blur(stream, 17, new Size(15,15));
+            var image = await BlurNokia.Imaging.Blur(stream, 7, new Size(15,15));
             var time = Perf.Finish("Nokia Blur");
             var memory = Memory.Snapshot() - memBefore;
             LogMessage("Time: " + time);
             LogMessage(string.Format("Memory: {0}", memory.ToPrettyMbString()));
             Image.Source = image;
             return new TestData { MemoryUsed = memory, TimeUsed = time.Elapsed };
+        }
+
+        public async Task Warmup()
+        {
+            await this.DoTheTest();
         }
 
         public async Task<Stream> GetImage()
