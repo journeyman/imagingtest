@@ -20,7 +20,7 @@
 
             Loaded += async (sender, args) =>
                 {
-                    await this.Warmup();
+                    //await this.Warmup();
 
                     var data = await DoTheTest();
                     DumpSingleTest(data);
@@ -44,7 +44,7 @@
             var stream = await GetImage();
             var memBefore = Memory.Snapshot();
             Perf.Checkpoint("Nokia Blur");
-            var image = await BlurNokia.Imaging.Blur(stream, 7, new Size(15,15));
+            var image = BlurBitmapEx.Imaging.Blur(stream, 7, new Size(15,15));
             var time = Perf.Finish("Nokia Blur");
             var memory = Memory.Snapshot() - memBefore;
             LogMessage("Time: " + time);
@@ -61,7 +61,7 @@
         public async Task<Stream> GetImage()
         {
             TaskCompletionSource<Stream> tcs = new TaskCompletionSource<Stream>();
-            var uri = new Uri("http://lorempixel.com/900/900/people/");
+            var uri = new Uri("http://lorempixel.com/200/200/people/");
             var client = new WebClient();
             client.OpenReadCompleted += (sender, args) =>
                 {
