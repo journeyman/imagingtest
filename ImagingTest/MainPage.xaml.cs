@@ -61,7 +61,7 @@
         public async Task<Stream> GetImage()
         {
             TaskCompletionSource<Stream> tcs = new TaskCompletionSource<Stream>();
-            var uri = new Uri("http://lorempixel.com/200/200/people/");
+            var uri = new Uri("http://lorempixel.com/900/900/people/");
             var client = new WebClient();
             client.OpenReadCompleted += (sender, args) =>
                 {

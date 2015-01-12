@@ -1,0 +1,26 @@
+900x900
+Nokia
+Time: 00:00:573
+Memory: 7.65 Mb
+
+Ex
+Time: 00:02:033
+Memory: 9.44 Mb
+
+200x200
+Nokia
+Time: 00:00:301
+Memory: 1.28 Mb
+
+Ex
+Time: 00:00:199
+Memory: 520.00 Kb
+
+
+Resized Nokia 200
+Time: 00:00:270
+Memory: 984.00 Kb
+
+Resized Ex 200
+Time: 00:00:091
+Memory: 228.00 Kb

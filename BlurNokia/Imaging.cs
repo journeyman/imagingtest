@@ -15,26 +15,6 @@ namespace BlurNokia
         {
             using (var source = new StreamImageSource(stream))
             {
-                //using (var bitmapRenderer = new BitmapRenderer(source))
-                //{
-                //    bitmapRenderer.Size = size;
-                //    bitmapRenderer.OutputOption = OutputOption.PreserveAspectRatio;
-                //    var bitmap = await bitmapRenderer.RenderAsync();
-                //    using (var newSource = new BitmapImageSource(bitmap))
-                //    using (var filters = new FilterEffect(newSource))
-                //    {
-                //        var blur = new BlurFilter(kernelSize);
-
-                //        filters.Filters = new[] { blur };
-                //        var target = new WriteableBitmap((int)bitmap.Dimensions.Width, (int)bitmap.Dimensions.Height);
-
-                //        using (var rend = new WriteableBitmapRenderer(filters, target))
-                //        {
-                //            return await rend.RenderAsync();
-                //        }
-                //    }
-                //}
-
                 using (var filters = new FilterEffect(source))
                 {
                     var blur = new BlurFilter(kernelSize);
@@ -51,30 +31,10 @@ namespace BlurNokia
 
                         using (var rend = new WriteableBitmapRenderer(new BitmapImageSource(bitmap), target))
                         {
-                            return await rend.RenderAsync();
+                            return await rend.RenderAsync().AsTask().ConfigureAwait(false);
                         }
                     }
                 }
-
-                //using (var filters = new FilterEffect(source))
-                //{
-                //    var blur = new BlurFilter(kernelSize);
-
-                //    filters.Filters = new[] { blur };
-
-                //    //var output = new WriteableBitmap(pixelWidth, pixelHeight);
-                //    using (var renderer = new BitmapRenderer(filters))
-                //    {
-                //        var bitmap = await renderer.RenderAsync();
-                //        var target = new WriteableBitmap((int)bitmap.Dimensions.Width, (int)bitmap.Dimensions.Height);
-
-                //        using (var rend = new WriteableBitmapRenderer(new BitmapImageSource(bitmap), target))
-                //        {
-                //            return await rend.RenderAsync();
-                //            //return target;
-                //        }
-                //    }
-                //}
             }
 
         }
