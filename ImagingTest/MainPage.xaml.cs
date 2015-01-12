@@ -1,31 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.IO.IsolatedStorage;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Windows.Storage;
-using BlurBitmapEx;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-using ImagingTest.Resources;
-
-namespace ImagingTest
+﻿namespace ImagingTest
 {
-    using Windows.Networking.Connectivity;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.IO.IsolatedStorage;
+    using System.Net;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using Microsoft.Phone.Controls;
 
-    using Microsoft.Phone.Net.NetworkInformation;
-
-    public class TestData
-    {
-        public long MemoryUsed { get; set; }
-        public TimeSpan TimeUsed { get; set; }
-    }
+    using Size = Windows.Foundation.Size;
 
     public partial class MainPage : PhoneApplicationPage
     {
@@ -35,54 +20,21 @@ namespace ImagingTest
 
             Loaded += async (sender, args) =>
                 {
-                    var hosts = NetworkInformation.GetHostNames().ToList();
-                    var profile = NetworkInformation.GetInternetConnectionProfile();
-                    var client = new WebClient();
-                    client.DownloadStringCompleted += (s, e) =>
-                    {
-                        var error = e.Error;
-                    };
-                    client.DownloadStringAsync(new Uri("https://journeyman.fwd.wf?log=" + Uri.EscapeUriString("test message from wp")));
-                    //await DoTheTest();
-                    //await DoTheTest();
-
-                    //var data = new List<TestData>();
-                    //foreach (var _ in Enumerable.Repeat(0, 10))
-                    //{
-                    //    data.Add(await this.DoTheTest());
-                    //}
-
-                    //DumpTestData(data);
+                    var data = await DoTheTest();
+                    DumpSingleTest(data);
+                    
+                    Application.Current.Terminate();
                 };
         }
 
-
-        private void DumpTestData(IEnumerable<TestData> testData)
+        private void DumpSingleTest(TestData testData)
         {
-            LogMessage("\n\n");
-            long totalMsec = 0;
-            long totalMem = 0;
-            int i = 0;
-            foreach (var data in testData)
-            {
-                i++;
-                totalMsec += (long)data.TimeUsed.TotalMilliseconds;
-                totalMem += data.MemoryUsed;
-                var str = string.Format("Time: {0}, Memory: {1}", data.TimeUsed.ToMinSecsMsecs(), data.MemoryUsed);
-                LogMessage(str);
-            }
-            var timeAvg = TimeSpan.FromMilliseconds(totalMsec / i);
-            var memAvg = totalMem / i;
-
-            LogMessage("--------------------------");
-            var finalMsg = string.Format("Avg Time: {0}, Avg Mem: {1}", timeAvg.ToMinSecsMsecs(), memAvg.ToPrettyMbString());
-            LogMessage(finalMsg);
-            var client = new WebClient();
-            client.DownloadStringCompleted += (s, e) =>
-                {
-                    var error = e.Error;
-                };
-            client.DownloadStringAsync(new Uri("http://192.168.26.150:7777/?log=" + Uri.EscapeUriString(finalMsg)));
+            var fileStorage = IsolatedStorageFile.GetUserStoreForApplication();
+            var writer = new StreamWriter(new IsolatedStorageFileStream("dump.txt", FileMode.Append, fileStorage));
+            
+            writer.WriteLine("{0},{1}", testData.TimeUsed, testData.MemoryUsed);
+            writer.Close();
+            writer.Dispose();
         }
 
         private async Task<TestData> DoTheTest()
@@ -90,14 +42,12 @@ namespace ImagingTest
             var stream = await GetImage();
             var memBefore = Memory.Snapshot();
             Perf.Checkpoint("Nokia Blur");
-            var image = await BlurNokia.Imaging.Blur(stream, 17);
+            var image = BlurBitmapEx.Imaging.Blur(stream, 17, new Size(15,15));
             var time = Perf.Finish("Nokia Blur");
             var memory = Memory.Snapshot() - memBefore;
             LogMessage("Time: " + time);
             LogMessage(string.Format("Memory: {0}", memory.ToPrettyMbString()));
             Image.Source = image;
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
             return new TestData { MemoryUsed = memory, TimeUsed = time.Elapsed };
         }
 
@@ -125,6 +75,29 @@ namespace ImagingTest
         {
             Log.Items.Add(msg);
             Debug.WriteLine(msg);
+        }
+
+
+        private void DumpTestData(IEnumerable<TestData> testData)
+        {
+            LogMessage("\n\n");
+            long totalMsec = 0;
+            long totalMem = 0;
+            int i = 0;
+            foreach (var data in testData)
+            {
+                i++;
+                totalMsec += (long)data.TimeUsed.TotalMilliseconds;
+                totalMem += data.MemoryUsed;
+                var str = string.Format("Time: {0}, Memory: {1}", data.TimeUsed.ToMinSecsMsecs(), data.MemoryUsed);
+                LogMessage(str);
+            }
+            var timeAvg = TimeSpan.FromMilliseconds(totalMsec / i);
+            var memAvg = totalMem / i;
+
+            LogMessage("--------------------------");
+            var finalMsg = string.Format("Avg Time: {0}, Avg Mem: {1}", timeAvg.ToMinSecsMsecs(), memAvg.ToPrettyMbString());
+            LogMessage(finalMsg);
         }
     }
 }
