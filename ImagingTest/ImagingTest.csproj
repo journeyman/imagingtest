@@ -154,10 +154,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BlurBitmapEx\BlurBitmapEx.csproj">
-      <Project>{d57a37e0-6d24-4fb5-b351-71480d7e1931}</Project>
-      <Name>BlurBitmapEx</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BlurNokia\BlurNokia.csproj">
       <Project>{8c4d93b3-fd24-49aa-a3d4-0fcf80e868e4}</Project>
       <Name>BlurNokia</Name>
