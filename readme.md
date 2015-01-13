@@ -1,16 +1,7 @@
+### Memory consumption (Kb):
+*note: NokiaSDK consists of 3 dlls which cause considerable (__~1.2 Mb__) footprint when loaded, whereas BitmapEx is lightweight*
 
+![](https://github.com/journeyman/imagingtest/blob/master/memory.jpg)
 
-# ImagingSDK: 
-## Blur params:
-- 1-256, kernelSize
-- Rect, region
-- BlurRegionShape (Exliptical | Rectangular)
-
-Strongly prefer Bitmap over WriteableBitmap. There are memory/garbage collector issues with WriteableBitmap, whereas the memory allocated by Bitmap is managed in native code within the Imaging SDK
-
-
-# WritableBitmapEx:
-## Blur params (Convolute):
-- kernel, (KernelGaussianBlur3x3 | KernelGaussianBlur5x5)
-- int, kernelFactorSum
-- int, kernelOffsetSum
+### Time consumption (ms):
+![](https://github.com/journeyman/imagingtest/blob/master/time.jpg)
